@@ -2,6 +2,7 @@ import unittest
 import ast
 from src import statements
 from src import expressions
+from src import utils
 
 class IndependentTests(unittest.TestCase):
 
@@ -16,6 +17,7 @@ class IndependentTests(unittest.TestCase):
             "a = 10 - 5 * 2 + 7",
             "a = 10 - (5 + 2)",
             "a = 10 - 5 + 2",
+            "a = (10 + 2) * 9",
             "a = 10 - (25 * 25)",
             "a = 10 * (25 / 100)",
             "a = 'string'",
@@ -25,10 +27,7 @@ class IndependentTests(unittest.TestCase):
 
         results = []
         for test in tests:
-            for obj in test.body:
-                if isinstance(obj, ast.Assign):
-                    for inst in statements.assign(obj):
-                        results.append(inst)
+            utils.read_ast(test.body, results)
 
         self.assertEqual("LET a = 10", results[0])
         self.assertEqual("LET a = b", results[1])
@@ -43,16 +42,17 @@ class IndependentTests(unittest.TestCase):
         self.assertEqual("LET a = 10 - 5 * 2 + 7", results[7])
         self.assertEqual("LET a = 10 - (5 + 2)", results[8])
         self.assertEqual("LET a = 10 - 5 + 2", results[9])
-        self.assertEqual("LET a = 10 - 25 * 25", results[10])
-        self.assertEqual("LET a = 10 * (25 / 100)", results[11])
+        self.assertEqual("LET a = (10 + 2) * 9", results[10])
+        self.assertEqual("LET a = 10 - 25 * 25", results[11])
+        self.assertEqual("LET a = 10 * (25 / 100)", results[12])
 
-        self.assertEqual('LET a = "string"', results[12])
+        self.assertEqual('LET a = "string"', results[13])
 
-        self.assertEqual('LET a = 10', results[13])
-        self.assertEqual('LET b = "string"', results[14])
+        self.assertEqual('LET a = 10', results[14])
+        self.assertEqual('LET b = "string"', results[15])
 
-        self.assertEqual('LET a = "string"', results[15])
-        self.assertEqual('LET b = "string"', results[16])
+        self.assertEqual('LET a = "string"', results[16])
+        self.assertEqual('LET b = "string"', results[17])
 
     def test_print(self):
         tests = [ast.parse(command) for command in [
