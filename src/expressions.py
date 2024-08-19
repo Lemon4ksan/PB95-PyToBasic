@@ -60,6 +60,15 @@ def call(obj: ast.Call) -> str:
         case 'print':
             result.append('PRINT')
             for arg in obj.args:
-                result.append(repr(arg.value).replace("'", '"'))
+                if isinstance(arg, ast.Name):
+                    result.append(str(arg.id))
+                elif isinstance(arg, ast.Constant):
+
+                    if isinstance(arg.value, str):
+                        result.append(repr(arg.value).replace("'", '"'))
+                    else:
+                        result.append(str(arg.value))
+                elif isinstance(arg, ast.BinOp):
+                    result.append(bin_op(arg))
 
     return ' '.join(result)
