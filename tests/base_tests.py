@@ -16,7 +16,10 @@ class IndependentTests(unittest.TestCase):
             "a = 10 - (5 + 2)",
             "a = 10 - 5 + 2",
             "a = 10 - (25 * 25)",
-            "a = 10 * (25 / 100)"
+            "a = 10 * (25 / 100)",
+            "a = 'string'",
+            "a, b = 10, 'string'",
+            "a, b = 'string', 'string'"
         ]]
 
         results = []
@@ -42,6 +45,13 @@ class IndependentTests(unittest.TestCase):
         self.assertEqual("LET a = 10 - 25 * 25", results[10])
         self.assertEqual("LET a = 10 * (25 / 100)", results[11])
 
+        self.assertEqual('LET a = "string"', results[12])
+
+        self.assertEqual('LET a = 10', results[13])
+        self.assertEqual('LET b = "string"', results[14])
+
+        self.assertEqual('LET a = "string"', results[15])
+        self.assertEqual('LET b = "string"', results[16])
 
 if __name__ == '__main__':
     unittest.main()
