@@ -17,6 +17,10 @@ def assign(obj: ast.Assign) -> list[str]:
         4.2:: a, b = c, 10:
             obj.targets = [Tuple(elts[Name(id='a'), Name(id='b')])],
             obj.value = [Tuple(elts[Name(id='c'), Constant(value=10)])]
+        5:: a = 15 + 10:
+            obj.targets = [Name(id='a')], obj.value = BinOp(left=Constant(value=15)
+                                                            op=Add()
+                                                            right=Constant(value=10)
     """
 
     result = []
@@ -38,8 +42,7 @@ def assign(obj: ast.Assign) -> list[str]:
                 elif isinstance(elt_value, ast.Constant):  # ex. 4.2
                     result.append(f"LET {str(elt_name.id)} = {str(elt_value.value)}")
 
-        elif isinstance(obj.value, ast.BinOp):
-
+        elif isinstance(obj.value, ast.BinOp):  # ex. 5
             result.append(f"LET {str(target.id)} = {bin_op(obj.value)}")
 
     return result
