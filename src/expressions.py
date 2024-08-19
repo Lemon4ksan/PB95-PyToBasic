@@ -55,7 +55,7 @@ def bin_op(obj: ast.BinOp, operation_stack=None) -> str:
 def call(obj: ast.Call) -> str:
     """Create a function call.
 
-    If function is not supported, NotImplementedError will be raised
+    If function is not supported, NotImplementedError will be raised.
     """
 
     if obj.func.id not in SUPPORTED_FUNCTIONS:
