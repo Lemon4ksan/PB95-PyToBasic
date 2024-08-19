@@ -1,5 +1,5 @@
 import ast
-from .expressions import bin_op
+from .expressions import bin_op, call
 
 def assign(obj: ast.Assign) -> list[str]:
     """Assign statement.
@@ -21,6 +21,9 @@ def assign(obj: ast.Assign) -> list[str]:
             obj.targets = [Name(id='a')], obj.value = BinOp(left=Constant(value=15)
                                                             op=Add()
                                                             right=Constant(value=10)
+        6:: a = input():
+            obj.targets = [Name(id='a')]
+            obj.value = Call(func=Name(id='input'), args=[], kwargs=[])
     """
 
     result = []
@@ -47,5 +50,11 @@ def assign(obj: ast.Assign) -> list[str]:
 
         elif isinstance(obj.value, ast.BinOp):  # ex. 5
             result.append(f"LET {str(target.id)} = {bin_op(obj.value)}")
+
+        elif isinstance(obj.value, ast.Call):
+            if obj.value.func.id == 'input':
+                result.append(f"INPUT {target.id}")
+            else:
+                result.append(f"{target.id} = {call(obj.value)}")
 
     return result
