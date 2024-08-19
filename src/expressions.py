@@ -54,21 +54,23 @@ def call(obj: ast.Call) -> str:
     if obj.func.id not in SUPPORTED_FUNCTIONS:
         raise NotImplementedError(f'Function {type(obj.func.id)} is not implemented')
 
-    result = []
+    result = [obj.func.id.upper()]
 
-    match obj.func.id:
-        case 'print':
-            result.append('PRINT')
-            for arg in obj.args:
-                if isinstance(arg, ast.Name):
-                    result.append(str(arg.id))
-                elif isinstance(arg, ast.Constant):
+    for arg in obj.args:
+        if isinstance(arg, ast.Name):
+            result.append(str(arg.id))
 
-                    if isinstance(arg.value, str):
-                        result.append(repr(arg.value).replace("'", '"'))
-                    else:
-                        result.append(str(arg.value))
-                elif isinstance(arg, ast.BinOp):
-                    result.append(bin_op(arg))
+        elif isinstance(arg, ast.Constant):
+
+            if isinstance(arg.value, str):
+                result.append(repr(arg.value).replace("'", '"'))
+            else:
+                result.append(str(arg.value))
+
+        elif isinstance(arg, ast.BinOp):
+            result.append(bin_op(arg))
+
+        elif isinstance(arg, ast.Call):
+            result.append(call(arg))
 
     return ' '.join(result)
