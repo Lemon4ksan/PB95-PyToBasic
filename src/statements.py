@@ -28,7 +28,7 @@ def assign(obj: ast.Assign) -> list[str]:
         # target: ast.Name
 
         if isinstance(target, ast.Name) and isinstance(obj.value, ast.Constant):  # ex. 1-2
-            result.append(f"LET {str(target.id)} = {repr(obj.value.value)}")
+            result.append(f"LET {str(target.id)} = {repr(obj.value.value).replace("'", '"')}")
 
         elif isinstance(target, ast.Name) and isinstance(obj.value, ast.Name):  # ex. 3
             result.append(f"LET {str(target.id)} = {str(obj.value.id)}")
@@ -36,11 +36,14 @@ def assign(obj: ast.Assign) -> list[str]:
         elif isinstance(target, ast.Tuple) and isinstance(obj.value, ast.Tuple):  # ex. 4
             for elt_name, elt_value in zip(target.elts, obj.value.elts):
 
-                if isinstance(elt_value, ast.Name):  # ex. 4.1
-                    result.append(f"LET {str(elt_name.id)} = {str(elt_value.id)}")
+                if isinstance(elt_value, ast.Constant):  # ex. 4.1
+                    result.append(f"LET {str(elt_name.id)} = {repr(elt_value.value).replace("'", '"')}")
 
-                elif isinstance(elt_value, ast.Constant):  # ex. 4.2
-                    result.append(f"LET {str(elt_name.id)} = {str(elt_value.value)}")
+                elif isinstance(elt_value, ast.Name):  # ex. 4.2
+                    if isinstance(elt_value.ctx, ast.Load):
+                        result.append(f"LET {str(elt_name.id)} = {str(elt_value.id)}")
+                    else:
+                        result.append(f"LET {str(elt_name.id)} = {repr(elt_value.id).replace("'", '"')}")
 
         elif isinstance(obj.value, ast.BinOp):  # ex. 5
             result.append(f"LET {str(target.id)} = {bin_op(obj.value)}")
