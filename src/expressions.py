@@ -1,5 +1,5 @@
 import ast
-from .constants import SUPPORTED_OPERAIONS, BASE_OPERATIONS
+from .constants import SUPPORTED_BINARY_OPERAIONS, BASE_OPERATIONS, SUPPORTED_FUNCTIONS
 
 def bin_op(obj: ast.BinOp, operation_stack=None) -> str:
     """Binary operaion. Supports + - * /
@@ -15,8 +15,10 @@ def bin_op(obj: ast.BinOp, operation_stack=None) -> str:
         since it will execute first anyway.
     """
 
-    if type(obj.op) not in SUPPORTED_OPERAIONS:
-        raise NotImplementedError(f'Operaion {type(obj.op)} is not implemented')
+    if type(obj.op) not in SUPPORTED_BINARY_OPERAIONS:
+        raise NotImplementedError(f"Operaion {type(obj.op)} is not implemented")
+    elif any([isinstance(obj.left, ast.Str), isinstance(obj.right, ast.Str)]):
+        raise TypeError("Can't concatonate strings in PBasic")
 
     left = ''
     right = ''
@@ -47,3 +49,17 @@ def bin_op(obj: ast.BinOp, operation_stack=None) -> str:
         right = obj.right.value
 
     return f"{left} {BASE_OPERATIONS[type(obj.op)]} {right}"
+
+def call(obj: ast.Call) -> str:
+    if obj.func.id not in SUPPORTED_FUNCTIONS:
+        raise NotImplementedError(f'Function {type(obj.func.id)} is not implemented')
+
+    result = []
+
+    match obj.func.id:
+        case 'print':
+            result.append('PRINT')
+            for arg in obj.args:
+                result.append(repr(arg.value).replace("'", '"'))
+
+    return ' '.join(result)
