@@ -10,11 +10,11 @@ def main():
 
         if isinstance(obj, ast.Assign):
             for inst in assign(obj):
-                instructions_list.append(inst)
+                instructions_list.append(inst.upper())
 
         if isinstance(obj, ast.Expr):
             if isinstance(obj.value, ast.Call):
-                instructions_list.append(call(obj.value))
+                instructions_list.append(call(obj.value).upper())
 
 if __name__ == '__main__':
     instructions_list = []
