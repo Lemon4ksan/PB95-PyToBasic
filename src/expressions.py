@@ -1,21 +1,32 @@
 import ast
 from .constants import SUPPORTED_OPERAIONS
 
-def bin_op(obj: ast.BinOp, operaion_stack=None) -> str:
+def bin_op(obj: ast.BinOp, operation_stack=None) -> str:
     if type(obj.op) not in SUPPORTED_OPERAIONS:
         raise NotImplementedError(f'Operaion {type(obj.op)} is not implemented')
 
-    if operaion_stack is None:
+    left = ''
+    right = ''
+
+    if operation_stack is None:
         operation_stack = []
 
-    if isinstance(obj.right, ast.BinOp):
-        operation_stack.append(bin_op(obj.right, operaion_stack))
+    if isinstance(obj.left, ast.BinOp):
+        operation_stack.append(bin_op(obj.left, operation_stack))
 
-        right = ''
+        for operation in operation_stack:
+            left += operation
+        operation_stack.clear()
+    else:
+        left = obj.left.value
+
+    if isinstance(obj.right, ast.BinOp):
+        operation_stack.append(bin_op(obj.right, operation_stack))
+
         for operation in operation_stack:
             right += operation
-        return f'{str(obj.left.value)} + {right}'
-
+        operation_stack.clear()
     else:
-        right = obj.right
-        return f'{str(obj.left.value)} + {str(right.value)}'
+        right = obj.right.value
+
+    return f"{left} + {right}"
