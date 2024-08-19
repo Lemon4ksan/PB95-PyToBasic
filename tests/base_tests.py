@@ -14,6 +14,7 @@ class IndependentTests(unittest.TestCase):
             "a = 10 + 5",
             "a = 10 - 5 * 2 + 7",
             "a = 10 - (5 + 2)",
+            "a = 10 - 5 + 2",
             "a = 10 - (25 * 25)",
             "a = 10 * (25 / 100)"
         ]]
@@ -37,8 +38,9 @@ class IndependentTests(unittest.TestCase):
         self.assertEqual("LET a = 10 + 5", results[6])
         self.assertEqual("LET a = 10 - 5 * 2 + 7", results[7])
         self.assertEqual("LET a = 10 - (5 + 2)", results[8])
-        self.assertEqual("LET a = 10 - 25 * 25", results[9])
-        self.assertEqual("LET a = 10 * (25 / 100)", results[10])
+        self.assertEqual("LET a = 10 - 5 + 2", results[9])
+        self.assertEqual("LET a = 10 - 25 * 25", results[10])
+        self.assertEqual("LET a = 10 * (25 / 100)", results[11])
 
 
 if __name__ == '__main__':
