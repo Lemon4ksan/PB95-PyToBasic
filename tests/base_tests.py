@@ -1,6 +1,7 @@
 import unittest
 import ast
 from src import statements
+from src import expressions
 
 class IndependentTests(unittest.TestCase):
 
@@ -52,6 +53,26 @@ class IndependentTests(unittest.TestCase):
 
         self.assertEqual('LET a = "string"', results[15])
         self.assertEqual('LET b = "string"', results[16])
+
+    def test_print(self):
+        tests = [ast.parse(command) for command in [
+            "print(100)",
+            "print('100')",
+            "print(a)",
+            "print(50 + 50)",
+        ]]
+
+        results = []
+        for test in tests:
+            for obj in test.body:
+                if isinstance(obj, ast.Expr):
+                    if isinstance(obj.value, ast.Call):
+                        results.append(expressions.call(obj.value))
+
+        self.assertEqual("PRINT 100", results[0])
+        self.assertEqual('PRINT "100"', results[1])
+        self.assertEqual("PRINT a", results[2])
+        self.assertEqual("PRINT 50 + 50", results[3])
 
 if __name__ == '__main__':
     unittest.main()
