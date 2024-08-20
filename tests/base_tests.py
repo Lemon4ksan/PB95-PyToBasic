@@ -88,19 +88,13 @@ class IndependentTests(unittest.TestCase):
                "    else:\n" \
                "        print(25)\n"
         expected = [
-            "IF a==b THEN GOTO 7",
-            "IF a==b THEN GOTO 3",
-            "PRINT 25",
-            "GOTO 2",
-            "PRINT 15",
+            "IF a==b THEN GOTO 4",
+            "IF a==b THEN PRINT 15",
+            "ELSE PRINT 25",
+            "GOTO 3",
+            "IF a==b THEN PRINT 15",
+            "ELSE PRINT 25",
             "REM *ELSE EXIT*",
-            "GOTO 6",
-            "IF a==b THEN GOTO 3",
-            "PRINT 25",
-            "GOTO 2",
-            "PRINT 15",
-            "REM *ELSE EXIT*",
-            "REM *ELSE EXIT*"
         ]
 
         tree = ast.parse(test)
