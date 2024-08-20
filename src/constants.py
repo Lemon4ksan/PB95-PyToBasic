@@ -18,6 +18,12 @@ SUPPORTED_FUNCTIONS = [
     'circle'
 ]
 
+SUPPORTED_COMPARE_OPERATIONS = {
+    ast.Eq: '==',
+    ast.Gt: '>',
+    ast.Lt: '<'
+}
+
 BASE_OPERATIONS = {
     ast.Add: '+',
     ast.Sub: '-',
