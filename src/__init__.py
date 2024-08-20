@@ -1,6 +1,7 @@
 from .constants import SUPPORTED_BINARY_OPERAIONS
 from .constants import BASE_OPERATIONS
 from .constants import SUPPORTED_FUNCTIONS
+from .constants import SUPPORTED_COMPARE_OPERATIONS
 
 from .aliases import color
 from .aliases import fill
@@ -18,11 +19,14 @@ from .expressions import bin_op
 from .expressions import call
 
 from .statements import assign
+from .statements import create_if
 
 __all__ = [
     'SUPPORTED_BINARY_OPERAIONS',
     'BASE_OPERATIONS',
     'SUPPORTED_FUNCTIONS',
+    'SUPPORTED_COMPARE_OPERATIONS',
+    'create_if',
     'color',
     'fill',
     'cls',
