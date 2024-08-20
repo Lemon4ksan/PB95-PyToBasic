@@ -61,9 +61,10 @@ def assign(obj: ast.Assign) -> list[str]:
     return result
 
 def create_if(obj: ast.If) -> list[str]:
-    line = ['IF']
+    condition = ['IF']
     result = []
-    temp = []
+    else_stmt = []
+    if_stmt = []
 
     if isinstance(obj.test, ast.Compare):
         if type(obj.test.ops[0]) not in SUPPORTED_COMPARE_OPERATIONS:
@@ -83,45 +84,52 @@ def create_if(obj: ast.If) -> list[str]:
         elif isinstance(obj.test.comparators[0], ast.Constant):
             right = str(obj.test.comparators[0].id)
 
-        line.append(f'{left}{SUPPORTED_COMPARE_OPERATIONS[type(obj.test.ops[0])]}{right}')
+        condition.append(f'{left}{SUPPORTED_COMPARE_OPERATIONS[type(obj.test.ops[0])]}{right}')
 
     for else_obj in obj.orelse:
 
         if isinstance(else_obj, ast.Assign):
             for inst in assign(else_obj):
-                temp.append(inst)
+                else_stmt.append(inst)
 
         if isinstance(else_obj, ast.Expr):
             if isinstance(else_obj.value, ast.Call):
-                temp.append(call(else_obj.value))
+                else_stmt.append(call(else_obj.value))
 
         if isinstance(else_obj, ast.If):
             for inst in create_if(else_obj):
-                temp.append(inst)
-
-    line.append(f'THEN GOTO {len(temp) + 2}')
-    result.append(" ".join(line))
-    for temp_obj in temp:
-        result.append(temp_obj)
-    temp.clear()
+                else_stmt.append(inst)
 
     for if_obj in obj.body:
 
         if isinstance(if_obj, ast.Assign):
             for inst in assign(if_obj):
-                temp.append(inst)
+                if_stmt.append(inst)
 
         if isinstance(if_obj, ast.Expr):
             if isinstance(if_obj.value, ast.Call):
-                temp.append(call(if_obj.value))
+                if_stmt.append(call(if_obj.value))
 
         if isinstance(if_obj, ast.If):
             for inst in create_if(if_obj):
-                temp.append(inst)
+                if_stmt.append(inst)
 
-    result.append(f"GOTO {len(temp) + 1}")
-    for temp_obj in temp:
-        result.append(temp_obj)
-    result.append("REM *ELSE EXIT*")
+    if len(else_stmt) == 1 and len(if_stmt) == 1:
+        condition.append(f'THEN {if_stmt[0]}')
+        result.append(" ".join(condition))
+        result.append(f'ELSE {else_stmt[0]}')
+    else:
+        condition.append(f'THEN GOTO {len(else_stmt) + 2}')
+        result.append(" ".join(condition))
+
+        for else_obj in else_stmt:
+            result.append(else_obj)
+
+        result.append(f"GOTO {len(if_stmt) + 1}")
+
+        for if_obj in if_stmt:
+            result.append(if_obj)
+
+        result.append("REM *ELSE EXIT*")
 
     return result
