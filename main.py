@@ -1,6 +1,7 @@
 import ast
-from src.statements import assign
+from src.statements import assign, create_if
 from src.expressions import call
+
 
 def main():
     with open('programm.py', 'r') as file:
@@ -16,8 +17,18 @@ def main():
             if isinstance(obj.value, ast.Call):
                 instructions_list.append(call(obj.value).upper())
 
+        if isinstance(obj, ast.If):
+            for inst in create_if(obj):
+                instructions_list.append(inst.upper())
+
+
 if __name__ == '__main__':
     instructions_list = []
     main()
-    for index, instruction in enumerate(instructions_list):
-        print(f'{index + 1:02d} {instruction}')
+    for index, instruction in enumerate(instructions_list, start=1):
+        if "GOTO " in instruction:
+            goto_i = instruction.index('GOTO ') + 5
+            instruction = instruction[:goto_i] + f"{int(instruction[goto_i:]) + index:02d}"
+            print(f'{index:02d} {instruction}')
+        else:
+            print(f'{index:02d} {instruction}')
