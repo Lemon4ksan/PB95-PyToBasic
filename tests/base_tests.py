@@ -69,7 +69,8 @@ class IndependentTests(unittest.TestCase):
             for obj in test.body:
                 if isinstance(obj, ast.Expr):
                     if isinstance(obj.value, ast.Call):
-                        results.append(expressions.call(obj.value))
+                        for inst in expressions.call(obj.value):
+                            results.append(inst)
 
         self.assertEqual("PRINT 100", results[0])
         self.assertEqual('PRINT "100"', results[1])
@@ -102,6 +103,22 @@ class IndependentTests(unittest.TestCase):
         for obj in tree.body:
             if isinstance(obj, ast.If):
                 for i, inst in enumerate(statements.create_if(obj)):
+                    self.assertEqual(expected[i], inst)
+
+    def test_for_loop(self):
+        test = "for a in range(1, 11):\n" \
+               "    print(a)\n"
+        expected = [
+            "FOR a=1 TO 10",
+            "PRINT a",
+            "NEXT a"
+        ]
+
+        tree = ast.parse(test)
+
+        for obj in tree.body:
+            if isinstance(obj, ast.For):
+                for i, inst in enumerate(statements.create_for(obj)):
                     self.assertEqual(expected[i], inst)
 
 
