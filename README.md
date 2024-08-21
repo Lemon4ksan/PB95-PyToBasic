@@ -7,6 +7,12 @@ Since python code is much more readable, you will create scripts much faster.
 > PBasic is very limited, you can't concatonate strings, create functions, create while loops, create classes, 
 > use most compare operators, create local variables and much more. Take it as a small tool for experimenting.
 
+## Contents
+  - [Usage](#usage)
+  - [Documentation](#documentation)
+  - [Contribution](#contribution)
+  - [License](#license)
+
 ## Usage
 Write your code in programm.py and then execute main.py file. The console output is your PBasic programm.
 
@@ -125,3 +131,11 @@ for i in range(1, 17):
 print(tan(30))
 print(cos(30 + rnd(25)))  # !!! Addition will happen only after cos will work. You can still create code like this
 ```
+
+## Contribution
+I don't think many people will use this converter, I created it for myself in the first place, 
+but if you want to improve already existing code or implement your own functionality, then go ahead. If you want to 
+reach me, there's a Discord link in my profile.
+
+## License
+This project uses MIT License. See [LICENSE](https://github.com/Lemon4ksan/PB95-PyToBasic/blob/master/LICENSE) for details.
