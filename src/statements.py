@@ -61,8 +61,8 @@ def assign(obj: ast.Assign) -> list[str]:
     return result
 
 def create_if(obj: ast.If) -> list[str]:
-    condition = ['IF']
     result = []
+    condition = ['IF']
     else_stmt = []
     if_stmt = []
 
@@ -94,10 +94,15 @@ def create_if(obj: ast.If) -> list[str]:
 
         if isinstance(else_obj, ast.Expr):
             if isinstance(else_obj.value, ast.Call):
-                else_stmt.append(call(else_obj.value))
+                for inst in call(else_obj.value):
+                    else_stmt.append(inst)
 
         if isinstance(else_obj, ast.If):
             for inst in create_if(else_obj):
+                else_stmt.append(inst)
+
+        if isinstance(else_obj, ast.For):
+            for inst in create_for(else_obj):
                 else_stmt.append(inst)
 
     for if_obj in obj.body:
@@ -108,10 +113,15 @@ def create_if(obj: ast.If) -> list[str]:
 
         if isinstance(if_obj, ast.Expr):
             if isinstance(if_obj.value, ast.Call):
-                if_stmt.append(call(if_obj.value))
+                for inst in call(if_obj.value):
+                    if_stmt.append(inst)
 
         if isinstance(if_obj, ast.If):
             for inst in create_if(if_obj):
+                if_stmt.append(inst)
+
+        if isinstance(if_obj, ast.For):
+            for inst in create_for(if_obj):
                 if_stmt.append(inst)
 
     if len(else_stmt) == 1 and len(if_stmt) == 1:
@@ -131,5 +141,51 @@ def create_if(obj: ast.If) -> list[str]:
             result.append(if_obj)
 
         result.append("REM *ELSE EXIT*")
+
+    return result
+
+def create_for(obj: ast.For) -> list[str]:
+
+    result = []
+    body = []
+
+    if not isinstance(obj.iter, ast.Call):
+        raise NotImplementedError("Can only use range() created iterators.")
+    elif obj.iter.func.id != 'range':
+        raise NotImplementedError("Can only use range() created iterators.")
+    elif obj.orelse:
+        raise NotImplementedError("Can't use else statement in for loops.")
+
+    if len(obj.iter.args) == 2:
+        result.append(f"FOR {obj.target.id}={obj.iter.args[0].value} TO {obj.iter.args[1].value - 1}")  # Decreasing by 1 to match results with python
+    else:
+        result.append(f"FOR {obj.target.id}=0 TO {obj.iter.args[0].value}")
+
+    for body_obj in obj.body:
+
+        if isinstance(body_obj, ast.Break):
+            raise NotImplementedError("Can't use break statement.")
+
+        if isinstance(body_obj, ast.Assign):
+            for inst in assign(body_obj):
+                body.append(inst)
+
+        if isinstance(body_obj, ast.Expr):
+            if isinstance(body_obj.value, ast.Call):
+                for inst in call(body_obj.value):
+                    body.append(inst)
+
+        if isinstance(body_obj, ast.If):
+            for inst in create_if(body_obj):
+                body.append(inst)
+
+        if isinstance(body_obj, ast.For):
+            for inst in create_for(body_obj):
+                body.append(inst)
+
+    for body_obj in body:
+        result.append(body_obj)
+
+    result.append(f"NEXT {obj.target.id}")
 
     return result
