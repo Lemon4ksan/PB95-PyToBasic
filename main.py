@@ -1,7 +1,6 @@
 import ast
-from src.statements import assign, create_if
+from src.statements import assign, create_if, create_for
 from src.expressions import call
-
 
 def main():
     with open('programm.py', 'r') as file:
@@ -15,12 +14,16 @@ def main():
 
         if isinstance(obj, ast.Expr):
             if isinstance(obj.value, ast.Call):
-                instructions_list.append(call(obj.value).upper())
+                for inst in call(obj.value):
+                    instructions_list.append(inst.upper())
 
         if isinstance(obj, ast.If):
             for inst in create_if(obj):
                 instructions_list.append(inst.upper())
 
+        if isinstance(obj, ast.For):
+            for inst in create_for(obj):
+                instructions_list.append(inst.upper())
 
 if __name__ == '__main__':
     instructions_list = []
