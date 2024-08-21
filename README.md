@@ -14,6 +14,10 @@ Since python code is much more readable, you will create scripts much faster.
   - [License](#license)
 
 ## Usage
+> [!NOTE]  
+> You need python 3.12.0 to run converter properly. AST is changing with every new version. 
+> I can't guarantee that it will work on older or newer versions.
+
 Write your code in programm.py and then execute main.py file. The console output is your PBasic programm.
 
 Note that you need to manually input instructions in game. There are save files for written code 
