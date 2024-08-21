@@ -34,6 +34,8 @@ def bin_op(obj: ast.BinOp, operation_stack=None) -> str:
             else:
                 left += operation
         operation_stack.clear()
+    elif isinstance(obj.left, ast.Call):
+        left = call(obj.left)[0]
     else:
         left = obj.left.value
 
@@ -47,12 +49,14 @@ def bin_op(obj: ast.BinOp, operation_stack=None) -> str:
             else:
                 right += operation
         operation_stack.clear()
+    elif isinstance(obj.right, ast.Call):
+        right = call(obj.right)[0]
     else:
         right = obj.right.value
 
     return f"{left} {BASE_OPERATIONS[type(obj.op)]} {right}"
 
-def call(obj: ast.Call) -> str:
+def call(obj: ast.Call) -> list[str]:
     """Create a function call.
 
     If function is not supported, NotImplementedError will be raised.
@@ -61,23 +65,27 @@ def call(obj: ast.Call) -> str:
     if obj.func.id not in SUPPORTED_FUNCTIONS:
         raise NotImplementedError(f'Function {type(obj.func.id)} is not implemented')
 
-    result = [obj.func.id.upper()]
+    result = []
 
     for arg in obj.args:
         if isinstance(arg, ast.Name):
-            result.append(str(arg.id))
+            result.append(f"{obj.func.id.upper()} {str(arg.id)}")
 
         elif isinstance(arg, ast.Constant):
 
             if isinstance(arg.value, str):
-                result.append(repr(arg.value).replace("'", '"'))
+                result.append(f"{obj.func.id.upper()} {repr(arg.value).replace("'", '"')}")
             else:
-                result.append(str(arg.value))
+                result.append(f"{obj.func.id.upper()} {str(arg.value)}")
 
         elif isinstance(arg, ast.BinOp):
-            result.append(bin_op(arg))
+            result.append(f"{obj.func.id.upper()} {bin_op(arg)}")
 
         elif isinstance(arg, ast.Call):
-            result.append(call(arg))
+            line = []
+            for inst in call(arg):
+                line.append(inst)
 
-    return ' '.join(result)
+            result.append(f"{obj.func.id.upper()} {' '.join(line)}")
+
+    return result
