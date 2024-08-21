@@ -1,4 +1,4 @@
-# PB95-ToBasic
+# PB95-PyToBasic
 PyToBasic converts python code to a language used in game Progressbar95 called PBasic.
 Since python code is much more readable, you will create scripts much faster.
 
