@@ -3,7 +3,7 @@ PyToBasic converts python code to a language used in game Progressbar95 called P
 Since python code is much more readable, you will create scripts much faster.
 
 > [!NOTE]  
-> This is a fun little project that shouldn't be taken seriusly.
+> This is a fun little project that shouldn't be taken seriously.
 > PBasic is very limited, you can't concatonate strings, create functions, create while loops, create classes, 
 > use most compare operators, create local variables and much more. Take it as a small tool for experimenting.
 
